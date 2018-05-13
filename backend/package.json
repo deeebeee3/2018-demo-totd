@@ -1,7 +1,7 @@
 {
   "name": "totd",
   "version": "1.0.0",
-  "description": "Tyres On The Drive",
+  "description": "Tyres On The Drive Backend",
   "main": "index.js",
   "scripts": {
     "dev": "nodemon index",
