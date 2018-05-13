@@ -5,9 +5,12 @@ const Cors = require('@koa/cors')
 const BodyParser = require('koa-bodyparser')
 const Helmet = require('koa-helmet')
 const respond = require('koa-respond')
+const mongoose = require('mongoose');
 
 const app = new Koa()
 const router = new Router()
+
+mongoose.connect('mongodb://totduser:totdpassword@ds119160.mlab.com:19160/totd')
 
 app.use(Helmet())
 
