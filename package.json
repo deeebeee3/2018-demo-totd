@@ -1,10 +1,14 @@
 {
   "name": "totd",
   "version": "1.0.0",
-  "description": "Tyres On The Drive",
+  "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "concurrently --kill-others \"npm run backend\" \"npm run frontend\"",
+    "backend": "cd backend && npm run dev",
+    "frontend": "cd frontend && npm start",
+    "build": "cd frontend && npm run build",
+    "deploy": "npm run build && cd backend && now"
   },
   "repository": {
     "type": "git",
@@ -15,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/deeebeee3/totd/issues"
   },
-  "homepage": "https://github.com/deeebeee3/totd#readme"
+  "homepage": "https://github.com/deeebeee3/totd#readme",
+  "devDependencies": {
+    "concurrently": "^3.5.1"
+  }
 }
