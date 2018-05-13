@@ -2,18 +2,17 @@
  const mongoose = require('mongoose')
 
  // Declare Schema
- const NoteSchema = new mongoose.Schema(
+ const NotesSchema = new mongoose.Schema(
    {
      title: { type: String },
      details: { type: String },
-     tags: {type: String},
-     done: { type: Boolean },
+     tags: {type: String}
    },
    { timestamps: true }
  );
 
  // Declare Model to mongoose with Schema
- const Note = mongoose.model('Note', NoteSchema)
+ const Notes = mongoose.model('Notes', NotesSchema)
 
  // Export Model to be used in Node
- module.exports = mongoose.model('Note')
+ module.exports = mongoose.model('Notes')
