@@ -43,7 +43,7 @@ const NoteForm = ({ note, isDirty, isLoading, onUpdateProperty, onSave, onCancel
                 onClick={(e) => onSave(e)}>{note._id ? 'Update' : 'Add'}
             </button>
             {(isDirty || note._id) && <button
-                className={`button is-success`}
+                className={`button is-light`}
                 onClick={(e) => onCancel(e)}>Cancel
             </button>}
 

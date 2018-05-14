@@ -7,7 +7,6 @@ class Notes extends Component {
     state = {
         note: getNewNote(),
         notes: [],
-        error: '',
         isLoading: false,
         message: '',
         isDirty: false
@@ -17,14 +16,18 @@ class Notes extends Component {
         this.fetchNotes()
     }
 
-    fetchNotes() {
+    async fetchNotes() {
         this.setState({ isLoading: true })
 
-        // HTTP GET Request to our backend api and load into state
-        fetch('v1/notes')
-            .then((res) => res.json())
-            .then(notes => this.setState({ isLoading: false, notes }))
-            .catch((error) => this.setState({ error: error.message }))
+        try {
+            // HTTP GET Request to our backend api and load into state
+            const res = await fetch('v1/notes')
+            const notes = await res.json()
+
+            this.setState({ isLoading: false, notes })
+        } catch (err) {
+            this.setState({ message: err.message })
+        }
     }
 
     editNote(note) {
@@ -54,7 +57,7 @@ class Notes extends Component {
             // refresh...
             this.fetchNotes();
         } catch (err) {
-
+            this.setState({ message: err.message })
         }
     }
 
@@ -86,7 +89,7 @@ class Notes extends Component {
             // refresh...
             this.fetchNotes();
         } catch (err) {
-
+            this.setState({ message: err.message })
         }
     }
 
@@ -102,13 +105,13 @@ class Notes extends Component {
     }
 
     render() {
-        const { notes, note, isLoading, error, isDirty } = this.state
+        const { notes, note, isLoading, message, isDirty } = this.state
 
         return (
             <div>
                 <section className="section full-column">
                     <h1 className="title white">Notes</h1>
-                    <div className="error">{error}</div>
+                    <div className="error">{message}</div>
                 </section>
 
                 <div className="columns">
