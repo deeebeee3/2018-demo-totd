@@ -1,32 +1,16 @@
 import React, { Component } from 'react';
 import 'bulma/css/bulma.css';
-
-const Note = ({ note, id, onDelete, onEdit }) => (
-    <div className="box note-item level is-mobile">
-        <div className="level-left">
-            <span>{note.title}</span>
-        </div>
-        <div className="level-right">
-            <a className="edit level-item" onClick={(e) => { e.preventDefault(); onEdit() }}>Edit</a>
-            <a className="delete level-item" onClick={(e) => { e.preventDefault(); onDelete() }}>Delete</a>
-        </div>
-    </div>
-)
-
-function getNewNote() {
-    return {
-        title: '',
-        details: '',
-        tags: ''
-    }
-}
+import NoteList from './NoteList';
+import NoteForm from './NoteForm';
 
 class Notes extends Component {
     state = {
         note: getNewNote(),
         notes: [],
         error: '',
-        isLoading: false
+        isLoading: false,
+        message: '',
+        isDirty: false
     }
 
     componentDidMount() {
@@ -44,8 +28,13 @@ class Notes extends Component {
     }
 
     editNote(note) {
-        this.setState({ note });
-    } s
+        this.setState({ note, isDirty: false });
+    }
+
+    discardEdit(e) {
+        e.preventDefault();
+        this.setState({ note: getNewNote(), isDirty: false });
+    }
 
     async deleteNote(id) {
 
@@ -69,9 +58,14 @@ class Notes extends Component {
         }
     }
 
-    async addNote(event) {
+    async saveNote(event) {
         event.preventDefault();
         const { note } = this.state
+
+        if (!note.title) {
+            this.setState({ message: 'Please enter a note title' });
+            return;
+        }
 
         const url = note._id ? `v1/notes/${note._id}` : `v1/notes`;
 
@@ -87,14 +81,13 @@ class Notes extends Component {
 
             console.log('success', res)
 
-            this.setState({ note: getNewNote() });
+            this.setState({ note: getNewNote(), isDirty: false });
 
             // refresh...
             this.fetchNotes();
         } catch (err) {
 
         }
-
     }
 
     updateNoteProperty(e, prop) {
@@ -105,13 +98,11 @@ class Notes extends Component {
             [prop]: e.target.value
         };
 
-        this.setState({ note });
+        this.setState({ note, isDirty: true });
     }
 
     render() {
-        let { notes, note, isLoading, error } = this.state
-
-        const total = notes.length
+        const { notes, note, isLoading, error, isDirty } = this.state
 
         return (
             <div>
@@ -122,66 +113,34 @@ class Notes extends Component {
 
                 <div className="columns">
                     <section className="section column">
-                        <form className="form" onSubmit={this.addNote.bind(this)}>
-                            <div className="field">
-                                <label className="label">Title</label>
-                                <div className="control">
-                                    <input className="input"
-                                        type="text"
-                                        value={note.title}
-                                        onChange={(e) => this.updateNoteProperty(e, 'title')}
-                                        placeholder="Note Title" />
-                                </div>
-                            </div>
-
-                            <div className="field">
-                                <label className="label">Note Text</label>
-                                <div className="control">
-                                    <textarea className="textarea"
-                                        placeholder="Note Text"
-                                        value={note.details}
-                                        onChange={(e) => this.updateNoteProperty(e, 'details')} />
-                                </div>
-                            </div>
-
-                            <div className="field">
-                                <label className="label">Tags (separate each tag with a comma)</label>
-                                <div className="control">
-                                    <input className="input"
-                                        type="text"
-                                        value={note.tags}
-                                        placeholder="Tags"
-                                        onChange={(e) => this.updateNoteProperty(e, 'tags')} />
-                                </div>
-                            </div>
-
-                            <div className="control">
-                                <button
-                                    className={'button is-success ${isLoading && "is-loading"}'}
-                                    disabled={isLoading}
-                                    onClick={(e) => this.addNote(e)}>{note._id ? 'Update' : 'Add'}
-                                </button>
-                            </div>
-
-                        </form>
+                        <NoteForm
+                            note={note}
+                            isDirty={isDirty}
+                            isLoading={isLoading}
+                            onUpdateProperty={(e, prop) => this.updateNoteProperty(e, prop)}
+                            onSave={(e) => this.saveNote(e)}
+                            onCancel={(e) => this.discardEdit(e)}
+                        />
                     </section>
 
                     <section className="section column">
-                        <div className="container note-list">
-                            {notes.map((note) => <Note
-                                key={note._id}
-                                id={note._id}
-                                note={note}
-                                onDelete={() => this.deleteNote(note._id)}
-                                onEdit={() => this.editNote(note)} />)}
-                            <div className="white">
-                                Total: {total}
-                            </div>
-                        </div>
+                        <NoteList
+                            notes={notes}
+                            onDelete={(id) => this.deleteNote(id)}
+                            onEdit={(note) => this.editNote(note)}
+                        />
                     </section>
                 </div>
             </div>
         );
+    }
+}
+
+function getNewNote() {
+    return {
+        title: '',
+        details: '',
+        tags: ''
     }
 }
 
