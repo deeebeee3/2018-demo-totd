@@ -22,5 +22,8 @@
   "homepage": "https://github.com/deeebeee3/totd#readme",
   "devDependencies": {
     "concurrently": "^3.5.1"
+  },
+  "dependencies": {
+    "bulma": "^0.7.1"
   }
 }

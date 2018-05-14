@@ -23,7 +23,7 @@ async function update (ctx) {
   const id = ctx.params.id;
   const note = await Notes.findById(id);
 
-  const { title, details, tags } = ctx.params;
+  const { title, details, tags } = ctx.request.body;
 
   note.title = title;
   note.details = details;
